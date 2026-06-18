@@ -32,7 +32,18 @@ func (cpu *CPU) Execute(inst Instruction) {
 			inst.Rs1,
 			uint32(inst.Imm),
 		)
-
+	case OpLoad:
+		cpu.ExecuteLW(
+			inst.Rd,
+			inst.Rs1,
+			uint32(inst.Imm),
+		)
+	case OpStore:
+		cpu.ExecuteSW(
+			inst.Rs1,
+			inst.Rs2,
+			uint32(inst.Imm),
+		)
 	}
 	cpu.Regs[0] = 0
 }
@@ -59,4 +70,14 @@ func (cpu *CPU) ExecuteOR(rd, rs1, rs2 uint32) {
 func (cpu *CPU) ExecuteXOR(rd, rs1, rs2 uint32) {
 	cpu.Regs[rd] = cpu.Regs[rs1] ^ cpu.Regs[rs2]
 
+}
+func (cpu *CPU) ExecuteLW(rd, rs1, imm uint32) {
+	addr := cpu.Regs[rs1] + imm
+	cpu.Regs[rd] = cpu.Read32(addr)
+}
+
+func (cpu *CPU) ExecuteSW(rs1, rs2, imm uint32) {
+	addr := cpu.Regs[rs1] + imm
+	value := cpu.Regs[rs2]
+	cpu.Write32(addr, value)
 }

@@ -30,7 +30,7 @@ Decode
   ↓
 Instruction
   ↓
-Execute
+Executegit remote add origin git@github.com:jeepvan/riscv-emulator.git
   ↓
 Registers
 ```
