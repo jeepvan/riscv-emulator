@@ -1,25 +1,80 @@
-# RISC-V Emulator
+# RISC-V Emulator in Go
 
-A RISC-V RV32I emulator written in Go.
+A simple RV32I RISC-V emulator written in Go for learning computer architecture, instruction decoding, and emulator development.
 
-## Features
+## Current Features
 
-* RV32I instruction decoding
-* Fetch → Decode → Execute pipeline
-* Register file (x0-x31)
+### CPU Core
+
 * Program Counter (PC)
+* 32 General Purpose Registers (`x0-x31`)
+* Byte-addressable memory
+* Fetch → Decode → Execute pipeline
+
+### Memory Operations
+
+* Read8
+* Write8
+* Read32
+* Write32
+* Little-endian memory access
+
+### Implemented Instructions
+
+#### Arithmetic
+
+* ADD
+* SUB
+* ADDI
+
+#### Logical
+
+* AND
+* OR
+* XOR
+
+#### Memory
+
+* LW (Load Word)
+* SW (Store Word)
+
+### Instruction Decoding
+
+Implemented decoding for:
+
 * R-Type instructions
-
-  * ADD
-  * SUB
-  * AND
-  * OR
-  * XOR
 * I-Type instructions
+* Load instructions
+* Store instructions
 
-  * ADDI
+### Immediate Handling
 
-## Architecture
+* 12-bit immediate extraction
+* S-Type immediate reconstruction
+* Sign extension support
+
+## Project Structure
+
+```text
+riscv-emulator/
+├── cmd/
+│   └── emulator/
+│       └── main.go
+├── internal/
+│   └── cpu/
+│       ├── cpu.go
+│       ├── fetch.go
+│       ├── decode.go
+│       ├── execute.go
+│       ├── instructions.go
+│       ├── opcodes.go
+│       ├── memory.go
+│       ├── registers.go
+│       └── step.go
+└── go.mod
+```
+
+## Execution Flow
 
 ```text
 Memory
@@ -28,25 +83,54 @@ Fetch
   ↓
 Decode
   ↓
-Instruction
+Instruction Struct
   ↓
-Executegit remote add origin git@github.com:jeepvan/riscv-emulator.git
+Execute
   ↓
-Registers
+Registers / Memory
 ```
 
-## Current Status
+## Example
 
-The emulator can execute simple RV32I programs loaded into memory.
+```assembly
+ADDI x1, x0, 10
+ADDI x2, x0, 20
+ADD  x3, x1, x2
+```
+
+Result:
+
+```text
+x3 = 30
+```
 
 ## Roadmap
 
-* [ ] Sign extension for immediates
-* [ ] LW
-* [ ] SW
+### Completed
+
+* [x] Register file
+* [x] Memory subsystem
+* [x] Fetch stage
+* [x] Decode stage
+* [x] Execute stage
+* [x] ADD
+* [x] SUB
+* [x] ADDI
+* [x] AND
+* [x] OR
+* [x] XOR
+* [x] LW
+* [x] SW
+* [x] Sign extension
+
+### Next
+
 * [ ] BEQ
 * [ ] BNE
+* [ ] Branch decoding
 * [ ] JAL
+* [ ] JALR
 * [ ] ELF loading
-* [ ] Test suite
-* [ ] RV32I compliance
+* [ ] More RV32I instructions
+
+
