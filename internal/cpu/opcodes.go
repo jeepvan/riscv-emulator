@@ -5,4 +5,5 @@ const (
 	OpIType = 0x13
 	OpLoad  = 0x03
 	OpStore = 0x23
+	OpBranch= 0x63
 )
