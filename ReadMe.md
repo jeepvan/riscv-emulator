@@ -1,25 +1,19 @@
-# RISC-V Emulator in Go
+# RVEMU
 
-A simple RV32I RISC-V emulator written in Go for learning computer architecture, instruction decoding, and emulator development.
+A lightweight RISC-V RV32I emulator written in Go.
 
-## Current Features
+RVEMU implements a fetch-decode-execute pipeline, memory subsystem, ELF loading, and support for executing compiled RISC-V binaries.
+
+## Features
 
 ### CPU Core
 
+* 32 General Purpose Registers (x0-x31)
 * Program Counter (PC)
-* 32 General Purpose Registers (`x0-x31`)
-* Byte-addressable memory
 * Fetch → Decode → Execute pipeline
+* RV32I instruction decoding
 
-### Memory Operations
-
-* Read8
-* Write8
-* Read32
-* Write32
-* Little-endian memory access
-
-### Implemented Instructions
+### Supported Instructions
 
 #### Arithmetic
 
@@ -38,99 +32,129 @@ A simple RV32I RISC-V emulator written in Go for learning computer architecture,
 * LW (Load Word)
 * SW (Store Word)
 
-### Instruction Decoding
+#### Control Flow
 
-Implemented decoding for:
+* BEQ (Branch if Equal)
+* BNE (Branch if Not Equal)
+* JAL (Jump and Link)
+* JALR (Jump and Link Register)
 
-* R-Type instructions
-* I-Type instructions
-* Load instructions
-* Store instructions
+### ELF Support
 
-### Immediate Handling
+* ELF file parsing
+* Entry point extraction
+* `.text` section loading
+* Execution of compiled RV32I binaries
 
-* 12-bit immediate extraction
-* S-Type immediate reconstruction
-* Sign extension support
+## Architecture
+
+```text
+ELF File
+    ↓
+ELF Loader
+    ↓
+Memory
+    ↓
+Fetch
+    ↓
+Decode
+    ↓
+Execute
+    ↓
+Registers / Memory Updates
+```
 
 ## Project Structure
 
 ```text
-riscv-emulator/
-├── cmd/
-│   └── emulator/
-│       └── main.go
-├── internal/
-│   └── cpu/
-│       ├── cpu.go
-│       ├── fetch.go
-│       ├── decode.go
-│       ├── execute.go
-│       ├── instructions.go
-│       ├── opcodes.go
-│       ├── memory.go
-│       ├── registers.go
-│       └── step.go
-└── go.mod
+cmd/
+└── emulator/
+    └── main.go
+
+internal/cpu/
+├── cpu.go
+├── memory.go
+├── fetch.go
+├── decode.go
+├── execute.go
+├── loader.go
+├── elf.go
+├── step.go
+└── opcodes.go
 ```
 
-## Execution Flow
+## Building
 
-```text
-Memory
-  ↓
-Fetch
-  ↓
-Decode
-  ↓
-Instruction Struct
-  ↓
-Execute
-  ↓
-Registers / Memory
+```bash
+git clone <repository-url>
+cd riscv-emulator
+
+go build -o rvemu ./cmd/emulator
+```
+
+## Running
+
+```bash
+./rvemu hello.elf
+```
+
+Or install globally:
+
+```bash
+sudo cp rvemu /usr/local/bin/
+```
+
+Then:
+
+```bash
+rvemu hello.elf
 ```
 
 ## Example
 
-```assembly
-ADDI x1, x0, 10
-ADDI x2, x0, 20
-ADD  x3, x1, x2
+Compile a simple RISC-V program:
+
+```c
+int main() {
+    return 42;
+}
 ```
 
-Result:
+Run it:
 
-```text
-x3 = 30
+```bash
+rvemu hello.elf
 ```
 
-## Roadmap
+## Current Status
 
-### Completed
+### Implemented
 
-* [x] Register file
-* [x] Memory subsystem
-* [x] Fetch stage
-* [x] Decode stage
-* [x] Execute stage
-* [x] ADD
-* [x] SUB
-* [x] ADDI
-* [x] AND
-* [x] OR
-* [x] XOR
-* [x] LW
-* [x] SW
-* [x] Sign extension
+* RV32I core instruction support
+* Memory subsystem
+* Program loader
+* ELF loader
+* Execution of compiled RISC-V binaries
 
-### Next
+### Future Improvements
 
-* [x] BEQ
-* [x] BNE
-* [x] Branch decoding
-* [x] JAL
-* [x] JALR
-* [ ] ELF loading
-* [ ] More RV32I instructions
+* Additional RV32I instructions
+* Proper ELF virtual address mapping
+* System call support
+* Debugger and instruction tracing
 
+## Learning Outcomes
 
+This project explores:
+
+* Computer Architecture
+* Instruction Set Architectures (ISA)
+* RISC-V RV32I
+* Memory Management
+* ELF Executable Format
+* Emulator Design
+* Systems Programming in Go
+
+## License
+
+MIT License
