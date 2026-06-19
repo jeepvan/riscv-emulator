@@ -2,16 +2,16 @@
 
 A lightweight RISC-V RV32I emulator written in Go.
 
-RVEMU implements a fetch-decode-execute pipeline, memory subsystem, ELF loading, and execution of compiled RISC-V binaries.
+RVEMU implements a complete fetch-decode-execute pipeline, memory subsystem, ELF loading, and execution of compiled RISC-V binaries.
 
 ## Features
 
 ### CPU Core
 
-* 32 General Purpose Registers (x0-x31)
+* 32 general-purpose registers (x0-x31)
 * Program Counter (PC)
 * Fetch → Decode → Execute pipeline
-* RV32I instruction decoding
+* RV32I instruction decoding and execution
 
 ### Supported Instructions
 
@@ -27,7 +27,7 @@ RVEMU implements a fetch-decode-execute pipeline, memory subsystem, ELF loading,
 * OR
 * XOR
 
-#### Memory
+#### Memory Access
 
 * LW (Load Word)
 * SW (Store Word)
@@ -61,10 +61,10 @@ Decode
     ↓
 Execute
     ↓
-Registers / Memory Updates
+Register / Memory Updates
 ```
 
-## Project Structure
+## Repository Structure
 
 ```text
 cmd/
@@ -77,17 +77,17 @@ examples/
 
 internal/cpu/
 ├── cpu.go
-├── memory.go
-├── fetch.go
 ├── decode.go
-├── execute.go
-├── loader.go
 ├── elf.go
-├── step.go
-└── opcodes.go
+├── execute.go
+├── fetch.go
+├── loader.go
+├── memory.go
+├── opcodes.go
+└── step.go
 ```
 
-## Building
+## Build
 
 ```bash
 git clone https://github.com/jeepvan/riscv-emulator.git
@@ -96,9 +96,9 @@ cd riscv-emulator
 go build -o rvemu ./cmd/emulator
 ```
 
-## Running
+## Usage
 
-Run the included example:
+Run a compiled RISC-V ELF binary:
 
 ```bash
 ./rvemu examples/hello.elf
@@ -111,9 +111,9 @@ sudo cp rvemu /usr/local/bin/
 rvemu examples/hello.elf
 ```
 
-## Example Program
+## Example
 
-`examples/hello.c`
+Source:
 
 ```c
 int main() {
@@ -121,48 +121,40 @@ int main() {
 }
 ```
 
-Run it with:
+Compile:
 
 ```bash
-rvemu examples/hello.elf
+riscv64-unknown-elf-gcc \
+  -march=rv32i \
+  -mabi=ilp32 \
+  -nostdlib \
+  -nostartfiles \
+  hello.c \
+  -o hello.elf
+```
+
+Run:
+
+```bash
+rvemu hello.elf
 ```
 
 ## Current Status
 
-### Implemented
+Implemented:
 
-* RV32I core instruction support
-* Memory subsystem
-* Program loader
+* RV32I fetch-decode-execute pipeline
+* Register file and memory subsystem
 * ELF loader
+* Control flow instructions
 * Execution of compiled RV32I binaries
 
-### Known Limitations
+## Roadmap
 
-* Partial RV32I instruction coverage
-* ELF sections are currently loaded at address 0
-* No system call support
-* No operating system support
-
-### Future Improvements
-
-* Complete RV32I instruction set
+* Complete RV32I instruction coverage
 * Proper ELF virtual address mapping
-* System call support
 * Debugger and instruction tracing
-* Linux userspace support
-
-## Learning Outcomes
-
-This project explores:
-
-* Computer Architecture
-* Instruction Set Architectures (ISA)
-* RISC-V RV32I
-* Memory Management
-* ELF Executable Format
-* Emulator Design
-* Systems Programming in Go
+* System call support
 
 ## License
 
