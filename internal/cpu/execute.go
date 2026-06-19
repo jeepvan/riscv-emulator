@@ -60,6 +60,11 @@ func (cpu *CPU) Execute(inst Instruction) {
 			)
 		}
 	case OPJAL:
+		cpu.ExecuteJAL(
+			inst.Rd,
+			inst.Imm,
+		)
+	case OpJALR:
 
 	}
 	cpu.Regs[0] = 0
@@ -111,4 +116,9 @@ func (cpu *CPU) ExecuteBNE(rs1, rs2 uint32, imm int32) {
 func (cpu *CPU) ExecuteJAL(rd uint32, imm int32) {
 	cpu.Regs[rd] = cpu.PC + 4
 	cpu.PC = uint32(int32(cpu.PC) + imm)
+}
+
+func (cpu *CPU) ExecuteJALR(rd, rs1 uint32, imm int32) {
+	cpu.Regs[rd] = cpu.PC + 4
+	cpu.PC = uint32(int32(cpu.Regs[rs1]) + imm)
 }

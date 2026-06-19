@@ -7,4 +7,5 @@ const (
 	OpStore  = 0x23
 	OpBranch = 0x63
 	OPJAL    = 0x6F
+	OpJALR   = 0x67
 )

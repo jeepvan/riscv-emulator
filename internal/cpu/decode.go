@@ -45,12 +45,18 @@ func Decode(instr uint32) Instruction {
 		inst.Imm = SignExtend(imm, 13)
 	case OPJAL:
 		imm20 := (instr >> 31) & 0x1
-		imm101 := (instr >> 21) & 0x3FFF
-		imm11 := (instr >> 11) & 0x1
-		imm1912 := (instr >> 7) & 0xFF
+		imm101 := (instr >> 21) & 0x3FF
+		imm11 := (instr >> 20) & 0x1
+		imm1912 := (instr >> 12) & 0xFF
 
 		imm := (imm20 << 20) | (imm1912 << 12) | (imm11 << 11) | (imm101 << 1)
 		inst.Imm = SignExtend(imm, 21)
+	case OpJALR:
+		inst.Rd = (instr >> 7) & 0x1F
+		inst.Funct3 = (instr >> 12) & 0x7
+		inst.Rs1 = (instr >> 15) & 0x1F
+		imm := (instr >> 20) & 0xFFF
+		inst.Imm = SignExtend(imm, 12)
 	}
 
 	return inst
