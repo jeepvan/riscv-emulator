@@ -43,7 +43,16 @@ func Decode(instr uint32) Instruction {
 		imm11 := (instr >> 7) & 0x1
 		imm := (imm12 << 12) | (imm105 << 5) | (imm41 << 1) | (imm11 << 11)
 		inst.Imm = SignExtend(imm, 13)
+	case OPJAL:
+		imm20 := (instr >> 31) & 0x1
+		imm101 := (instr >> 21) & 0x3FFF
+		imm11 := (instr >> 11) & 0x1
+		imm1912 := (instr >> 7) & 0xFF
+
+		imm := (imm20 << 20) | (imm1912 << 12) | (imm11 << 11) | (imm101 << 1)
+		inst.Imm = SignExtend(imm, 21)
 	}
+
 	return inst
 }
 
