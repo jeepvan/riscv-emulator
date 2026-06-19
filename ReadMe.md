@@ -2,7 +2,7 @@
 
 A lightweight RISC-V RV32I emulator written in Go.
 
-RVEMU implements a fetch-decode-execute pipeline, memory subsystem, ELF loading, and support for executing compiled RISC-V binaries.
+RVEMU implements a fetch-decode-execute pipeline, memory subsystem, ELF loading, and execution of compiled RISC-V binaries.
 
 ## Features
 
@@ -71,6 +71,10 @@ cmd/
 └── emulator/
     └── main.go
 
+examples/
+├── hello.c
+└── hello.elf
+
 internal/cpu/
 ├── cpu.go
 ├── memory.go
@@ -86,7 +90,7 @@ internal/cpu/
 ## Building
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/jeepvan/riscv-emulator.git
 cd riscv-emulator
 
 go build -o rvemu ./cmd/emulator
@@ -94,25 +98,22 @@ go build -o rvemu ./cmd/emulator
 
 ## Running
 
+Run the included example:
+
 ```bash
-./rvemu hello.elf
+./rvemu examples/hello.elf
 ```
 
 Or install globally:
 
 ```bash
 sudo cp rvemu /usr/local/bin/
+rvemu examples/hello.elf
 ```
 
-Then:
+## Example Program
 
-```bash
-rvemu hello.elf
-```
-
-## Example
-
-Compile a simple RISC-V program:
+`examples/hello.c`
 
 ```c
 int main() {
@@ -120,10 +121,10 @@ int main() {
 }
 ```
 
-Run it:
+Run it with:
 
 ```bash
-rvemu hello.elf
+rvemu examples/hello.elf
 ```
 
 ## Current Status
@@ -134,14 +135,22 @@ rvemu hello.elf
 * Memory subsystem
 * Program loader
 * ELF loader
-* Execution of compiled RISC-V binaries
+* Execution of compiled RV32I binaries
+
+### Known Limitations
+
+* Partial RV32I instruction coverage
+* ELF sections are currently loaded at address 0
+* No system call support
+* No operating system support
 
 ### Future Improvements
 
-* Additional RV32I instructions
+* Complete RV32I instruction set
 * Proper ELF virtual address mapping
 * System call support
 * Debugger and instruction tracing
+* Linux userspace support
 
 ## Learning Outcomes
 
