@@ -127,7 +127,7 @@ x3 = 30
 
 * [x] BEQ
 * [x] BNE
-* [] Branch decoding
+* [ ] Branch decoding
 * [ ] JAL
 * [ ] JALR
 * [ ] ELF loading
