@@ -127,9 +127,9 @@ x3 = 30
 
 * [x] BEQ
 * [x] BNE
-* [x] Branch decoding
-* [x] JAL
-* [x] JALR
+* [ ] Branch decoding
+* [ ] JAL
+* [ ] JALR
 * [ ] ELF loading
 * [ ] More RV32I instructions
 
