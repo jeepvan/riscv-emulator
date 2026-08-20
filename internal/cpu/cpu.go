@@ -4,6 +4,7 @@ type CPU struct {
 	PC   uint32
 	Regs [32]uint32
 	Mem  []byte
+	PcChanged bool
 }
 
 func NewCPU() *CPU {
