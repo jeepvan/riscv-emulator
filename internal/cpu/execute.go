@@ -7,11 +7,11 @@ func (cpu *CPU) Execute(inst Instruction) {
 
 		switch inst.Funct3 {
 
-		case 0:
+		case 0x0: //func3 000
 
 			switch inst.Funct7 {
 
-			case 0:
+			case 0x00:
 				cpu.ExecuteADD(
 					inst.Rd,
 					inst.Rs1,
@@ -25,6 +25,25 @@ func (cpu *CPU) Execute(inst Instruction) {
 					inst.Rs2,
 				)
 			}
+		case 0x4: //100
+			cpu.ExecuteXOR(
+				inst.Rd,
+				inst.Rs1,
+				inst.Rs2,
+			)
+		case 0x6: //110
+			cpu.ExecuteOR(
+				inst.Rd,
+				inst.Rs1,
+				inst.Rs2,
+			)
+		case 0x7:
+			cpu.ExecuteAND(
+				inst.Rd,
+				inst.Rs1,
+				inst.Rs2,
+			)
+
 		}
 	case OpIType:
 		cpu.ExecuteADDI(
@@ -65,6 +84,11 @@ func (cpu *CPU) Execute(inst Instruction) {
 			inst.Imm,
 		)
 	case OpJALR:
+		cpu.ExecuteJALR(
+			inst.Rd,
+			inst.Rs1,
+			int32(inst.Imm),
+		)
 
 	}
 	cpu.Regs[0] = 0
@@ -106,19 +130,24 @@ func (cpu *CPU) ExecuteSW(rs1, rs2 uint32, imm int32) {
 func (cpu *CPU) ExecuteBEQ(rs1, rs2 uint32, imm int32) {
 	if cpu.Regs[rs1] == cpu.Regs[rs2] {
 		cpu.PC = uint32(int32(cpu.PC) + imm)
+		cpu.PcChanged = true
 	}
 }
 func (cpu *CPU) ExecuteBNE(rs1, rs2 uint32, imm int32) {
 	if cpu.Regs[rs1] != cpu.Regs[rs2] {
 		cpu.PC = uint32(int32(cpu.PC) + imm)
+		cpu.PcChanged = true
 	}
 }
 func (cpu *CPU) ExecuteJAL(rd uint32, imm int32) {
 	cpu.Regs[rd] = cpu.PC + 4
 	cpu.PC = uint32(int32(cpu.PC) + imm)
+	cpu.PcChanged = true
 }
 
 func (cpu *CPU) ExecuteJALR(rd, rs1 uint32, imm int32) {
+	target := uint32(int32(cpu.Regs[rs1]) + imm)
 	cpu.Regs[rd] = cpu.PC + 4
-	cpu.PC = uint32(int32(cpu.Regs[rs1]) + imm)
+	cpu.PC = target &^ 1
+	cpu.PcChanged = true
 }

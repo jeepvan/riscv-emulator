@@ -7,11 +7,10 @@ func (cpu *CPU) Step() {
 
 	fmt.Printf("instr=%08X\n", instr)
 
-	oldPC := cpu.PC
 	inst := Decode(instr)
+	cpu.PcChanged = false
 	cpu.Execute(inst)
-
-	if oldPC == cpu.PC {
+	if !cpu.PcChanged {
 		cpu.PC += 4
 	}
 }
