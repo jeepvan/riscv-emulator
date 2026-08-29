@@ -1,161 +1,40 @@
-# RVEMU
+# riscv-emulator
 
-A lightweight RISC-V RV32I emulator written in Go.
+![ci](https://github.com/jeepvan/riscv-emulator/actions/workflows/go.yml/badge.svg)
 
-RVEMU implements a complete fetch-decode-execute pipeline, memory subsystem, ELF loading, and execution of compiled RISC-V binaries.
+a risc-v emulator written in go from scratch, standard library only.
 
-## Features
+## what works right now
 
-### CPU Core
+rv32i subset, 12 instructions:
 
-* 32 general-purpose registers (x0-x31)
-* Program Counter (PC)
-* Fetch → Decode → Execute pipeline
-* RV32I instruction decoding and execution
+    add sub addi and or xor lw sw beq bne jal jalr
 
-### Supported Instructions
+- fetch/decode/execute loop with explicit next-pc handling
+- 32 registers + pc, x0 hardwired to zero
+- 1 MiB flat little-endian memory at address 0
+- minimal elf loading: copies .text to address 0 and starts there.
+  entry point and other segments are ignored for now
+- instruction encoders for all five formats, usable to hand-assemble
+  test programs from go
 
-#### Arithmetic
+## what does not exist yet
 
-* ADD
-* SUB
-* ADDI
+no csrs, no traps, no interrupts, no devices, no clean way for a
+program to halt. programs run until they fetch a zero word or hit the
+1000 step limit.
 
-#### Logical
+## build and run
 
-* AND
-* OR
-* XOR
+requires go 1.25+.
 
-#### Memory Access
+    go build ./...
+    go run ./cmd/emulator examples/hello.elf
 
-* LW (Load Word)
-* SW (Store Word)
+## test
 
-#### Control Flow
+    go test ./...
 
-* BEQ (Branch if Equal)
-* BNE (Branch if Not Equal)
-* JAL (Jump and Link)
-* JALR (Jump and Link Register)
-
-### ELF Support
-
-* ELF file parsing
-* Entry point extraction
-* `.text` section loading
-* Execution of compiled RV32I binaries
-
-## Architecture
-
-```text
-ELF File
-    ↓
-ELF Loader
-    ↓
-Memory
-    ↓
-Fetch
-    ↓
-Decode
-    ↓
-Execute
-    ↓
-Register / Memory Updates
-```
-
-## Repository Structure
-
-```text
-cmd/
-└── emulator/
-    └── main.go
-
-examples/
-├── hello.c
-└── hello.elf
-
-internal/cpu/
-├── cpu.go
-├── decode.go
-├── elf.go
-├── execute.go
-├── fetch.go
-├── loader.go
-├── memory.go
-├── opcodes.go
-└── step.go
-```
-
-## Build
-
-```bash
-git clone https://github.com/jeepvan/riscv-emulator.git
-cd riscv-emulator
-
-go build -o rvemu ./cmd/emulator
-```
-
-## Usage
-
-Run a compiled RISC-V ELF binary:
-
-```bash
-./rvemu examples/hello.elf
-```
-
-Or install globally:
-
-```bash
-sudo cp rvemu /usr/local/bin/
-rvemu examples/hello.elf
-```
-
-## Example
-
-Source:
-
-```c
-int main() {
-    return 42;
-}
-```
-
-Compile:
-
-```bash
-riscv64-unknown-elf-gcc \
-  -march=rv32i \
-  -mabi=ilp32 \
-  -nostdlib \
-  -nostartfiles \
-  hello.c \
-  -o hello.elf
-```
-
-Run:
-
-```bash
-rvemu hello.elf
-```
-
-## Current Status
-
-Implemented:
-
-* RV32I fetch-decode-execute pipeline
-* Register file and memory subsystem
-* ELF loader
-* Control flow instructions
-* Execution of compiled RV32I binaries
-
-## Roadmap
-
-* Complete RV32I instruction coverage
-* Proper ELF virtual address mapping
-* Debugger and instruction tracing
-* System call support
-
-## License
-
-MIT License
+table driven, spec level tests for every implemented instruction,
+including the cases that were once real bugs here: jal's link
+register, jalr's lsb clearing, rd == rs1 ordering.
